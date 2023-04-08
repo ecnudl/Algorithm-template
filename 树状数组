@@ -1,0 +1,68 @@
+//树状数组模板
+#include <bits/stdc++.h>
+using namespace std;
+#define MAXN 50005
+#define lowbit(x) ((x) & (-x))
+int tree[MAXN];
+
+void update (int i,int x)
+{
+    for(int pos = i;pos < MAXN;pos += lowbit(pos))
+    {
+        tree[pos] += x;
+    }
+}
+
+int query(int n)
+{
+    int ans = 0;
+    for(int pos = n;pos;pos -= lowbit(pos))
+        ans += tree[pos];
+    return ans;
+}
+
+int query(int a,int b)
+{
+    return query(b) - query(a-1);
+}
+
+int main()
+{
+    int cases;
+    cin>>cases;
+    for(int I = 1;I <= cases;I++)
+    {
+        ::memset(tree,0,sizeof(tree));
+        int x,n,a,b;
+        char opr[10];
+        printf("case #%d:\n",I);
+        cin>>n;
+        for(int i = 1;i <= n;i++)
+        {
+            cin>>x;
+            update(i,x);
+        }
+        for(int i = 1;i < 20;i++)
+        {
+            cout<<tree[i]<<endl;
+        }
+        while(scanf("%s",opr),opr[0] != 'E')
+        {
+            switch(opr[0])
+            {
+                case 'A':
+                    scanf("%d%d",&a,&b);
+                    update(a,b);
+                    break;
+                case 'S':
+                    scanf("%d%d",&a,&b);
+                    update(a,-b);
+                    break;
+                case 'Q':
+                    scanf("%d%d",&a,&b);
+                    printf("%d\n", query(a,b));
+            }
+        }
+    }
+    return 0;
+}
