@@ -1,0 +1,134 @@
+//八数码问题，第一种用康拓查重，第二种用string判重
+
+#include <bits/stdc++.h>
+using namespace std;
+const int LEN = 36200;       //状态共9！种
+
+struct node{int state[9];int dis;};
+
+int dir[4][2] = {{-1,0},{0,-1},{1,0},{0,1}};
+                                   //左上右下顺时针方向，左上角的坐标是（0，0）
+int visited[LEN] = {0};            //与每个状态对应的记录，CANTOR()函数对它的置数，并判重
+int start[9];                      //开始状态
+int goal[9];                       //目标状态
+long int factory[] = {1,1,2,6,24,120,720,5040,40320,362880};   //CANTOR查重用到的数字
+
+bool Cantor(int str[],int n)       //康托查重，首先将所有元素都变为0
+{                                       //康托查重的方法是每一种序列都有自身的一个位置，每当遇到一个组合时，
+    long result = 0;                    //就会首先计算出他的位置，如果这个位置已经不是0说明前面遇到过，那么return false，否则的话将这个元素从0变1说明已经遇到
+    for(int i = 0;i < n;i++){
+        int counted = 0;
+        for(int j = i;j < n;j++){
+            if(str[i] > str[j])
+                ++counted;
+        }
+        result += counted * factory[n-i-1];
+    }
+    if(!visited[result]){
+        visited[result] = 1;
+        return true;
+    }
+    else
+        return false;
+}
+
+int bfs(){
+    node head;
+    memcpy(head.state,start,sizeof(head.state));
+    head.dis = 0;
+    queue <node> q;
+    Cantor(head.state,9);
+    q.push(head);
+
+    while(!q.empty())
+    {
+        head = q.front();
+        if(memcmp(head.state,goal,sizeof(goal)) == 0)
+            return head.dis;
+        q.pop();
+        int z;
+        for(z = 0;z < 9;z++)
+            if(head.state[z] == 0)
+                break;
+
+        int x = z%3;
+        int y = z/3;
+        for(int i = 0;i < 4;i++){
+            int newx = x + dir[i][0];
+            int newy = y + dir[i][1];
+            int nz = newx + 3*newy;
+            if(newx >= 0 && newx < 3 && newy >= 0 && newy < 3){
+                node newnode;
+                memcpy(&newnode,&head,sizeof(struct node));
+                swap(newnode.state[z],newnode.state[nz]);
+                newnode.dis++;
+                if(Cantor(newnode.state,9))
+                    q.push(newnode);
+            }
+        }
+    }
+    return -1;
+}
+用Acwing的string查重
+int main()
+{
+    for(int i = 0;i < 9;i++) cin>>start[i];
+    for(int i = 0;i < 9;i++) cin>>goal[i];
+    int num = bfs();
+    if(num != -1) cout<<num<<endl;
+    else          cout<<"Impossible"<<endl;
+    return 0;
+}
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int bfs(string start)
+{
+    string end = "12345678x";
+    queue<string>mp;
+    unordered_map<string,int>hash;
+    mp.push(start);
+    hash[start] = 0;
+    while(mp.size())
+    {
+        auto t = mp.front();
+        mp.pop();
+
+        int distance = hash[t];
+        if(t == end) return distance;
+
+        int k = t.find("x");
+        int x = k / 3,y = k % 3;
+        int dx[4] = {0,0,-1,1},dy[4] = {1,-1,0,0};
+        for(int i =  0;i < 4;i++){
+            int a = x+dx[i];
+            int b = y+dy[i];
+            if(a >= 0 && a < 3 && b >= 0 && b < 3)
+            {
+                swap(t[k],t[a*3+b]);
+                if(!hash.count(t))
+                {
+                    hash[t] = distance+1;
+                    mp.push(t);
+                }
+                swap(t[k],t[a*3+b]);
+            }
+        }
+    }
+    return -1;
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);cout.tie(0);
+    string a;
+    for(int i = 0;i < 9;i++){
+        char c;
+        cin>>c;
+        a += c;
+    }
+    cout<<bfs(a)<<endl;
+    return 0;
+}
