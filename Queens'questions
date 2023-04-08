@@ -1,0 +1,86 @@
+//八皇后问题，深度搜素
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define N 20
+
+int n;
+char g[N][N];
+bool col[N],dg[N],udg[N];
+
+void dfs(int u)
+{
+    if(u == n)
+    {
+        for(int i = 0;i < n;i++) puts(g[i]);
+        puts("");
+        return;
+    }
+    for(int i = 0;i < n;i++)
+    {
+        if(!col[i] && !dg[u+i] && !udg[u-i+n])
+        {
+            g[u][i] = 'Q';
+            dg[i] = col[u+i] = udg[u-i+n] = true;
+            dfs(u+1);
+            dg[i] = col[u+i] = udg[u-i+n] = false;
+            g[u][i] = '.';
+        }
+    }
+}
+int main()
+{
+    cin>>n;
+    for(int i = 0;i < n;i++)
+        for(int j = 0;j < n;j++)
+            g[i][j] = '.';
+    dfs(0);
+    return 0;
+}
+N皇后问题，深度搜索，打表
+#include <bits/stdc++.h>
+using namespace std;
+int n,tot = 0;
+int col[12] = {0};               //数组作为地图容纳,col参数为横坐标，里面的数值是纵坐标
+
+bool check(int c,int r)            //坐标为(c,r)
+{
+    for(int i = 0;i < c;i++){
+        if(col[i] == r || abs(col[i]-r) == abs(i-c))
+            return false;
+    }
+    return true;
+}
+
+void DFS(int k)                   //搜索函数，统计有效结果的个数
+{
+    if(k == n){                   //k是行数
+        tot++;
+        return;
+    }
+    for(int c = 0;c < n;c++){     //搜索合适的放的位置，c是列数
+        if(check(k,c)){        //检测（k，c）是否符合
+            col[k] = c;
+            DFS(k+1);
+        }
+    }
+}
+
+int main()
+{
+    int ans[12] = {0};                 //打表
+    for(n = 0;n < 10;n++){
+        memset(col,0,sizeof(col));
+        tot = 0;
+        DFS(0);
+        ans[n] = tot;
+    }
+    while(cin>>n)
+    {
+        if(n == 0)
+            return 0;
+        cout<<ans[n]<<endl;
+    }
+    return 0;
+}
