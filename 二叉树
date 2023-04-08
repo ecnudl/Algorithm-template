@@ -1,0 +1,89 @@
+一些在网上寻找的建树模板以及总结
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct BitNode{
+    char data;
+    struct BitNode *lchild,*rchild;
+}BitNode,*BiTree;
+
+void CreatBiTree(BiTree *T)
+{
+    char ch;
+    cin>>ch;
+    if(ch == '#')
+        *T = NULL;
+    else
+    {
+        *T = new BitNode;
+        if(!*T) exit(OVERFLOW);
+        (*T)->data = ch;
+        CreatBiTree(&(*T)->lchild);
+        CreatBiTree(&(*T)->rchild);
+    }
+}
+int main()
+{
+    BiTree ptree = nullptr;
+    CreatBiTree(&ptree);
+
+    return 0;
+}
+二叉树的第一个练习题目：
+源自洛谷P1305
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define all(x) x.begin(),x.end()
+#define pb push_back
+using ll = long long;
+
+struct Tree           //创建树的最大根结点
+{
+    char value;
+    Tree *lchild;
+    Tree *rchild;
+    Tree(char w = 0) : value(w),lchild(0),rchild(0) {}   //相当于以某种函数形式创建这个树
+}tree;
+
+inline Tree* build(char w)          //建树的函数
+{
+    if(w == '*') return NULL;
+    else return new Tree;
+}
+
+Tree* find_tree(char w,Tree* start)       //用递归的方法寻找以w作为value数值的根结点
+{
+    if(start->value == w) return start;
+    Tree *ans = NULL;
+    if(start->lchild) ans = find_tree(w,start->lchild);
+    if(ans) return ans;
+    if(start->rchild) ans = find_tree(w,start->rchild);
+    return ans;
+}
+
+void preorder(Tree* start)          //先序遍历的函数，根左右
+{
+    cout<<start->value;
+    if(start->lchild) preorder(start->lchild);
+    if(start->rchild) preorder(start->rchild);
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    int n;cin>>n;
+    char me,l,r; cin >> me >> l >> r;
+    tree.value = me;tree.lchild = build(l);tree.rchild = build(r);      //初始化最开始的tree总根结点
+    for(int i = 1;i < n;i++)          //循环建树
+    {
+        cin >> me >> l >> r;
+        Tree *node = find_tree(me,&tree);
+        node->lchild = build(l);
+        node->rchild = build(r);
+    }
+    preorder(&tree);           //输出
+    return 0;
+}
