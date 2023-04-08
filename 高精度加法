@@ -1,0 +1,43 @@
+//高精度加法
+#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 100010;
+
+string x,y;
+vector <int> A(N,0);
+vector <int> B(N,0);
+vector <int> C(N,0);
+
+int ADD(vector <int> &a,vector <int> &b,vector <int> &c,int len)
+{
+    int t = 0;      //t表示进位，初始化为0
+    for(int i = 0;i < len;i++){
+        t += a[i]+b[i];
+        c[i] = t%10;       //留下个位
+        t /= 10;          //去掉个位数留下的东西
+    }
+    if(t) c[len++] = 1;
+    return len;
+}
+
+int main()
+{
+    cin>>x>>y;
+
+    //方便进位，所以在数组里面倒着存储
+
+    int cnt1 =  0,cnt2 = 0;
+    for(int i = x.length()-1;i >= 0;i--){
+        A[cnt1++] = x[i]-'0';
+    }
+    for(int i = y.length()-1;i >= 0;i--){
+        B[cnt2++] = y[i]-'0';
+    }
+
+    int res = ADD(A,B,C,max(cnt1,cnt2));          //返回最终数组的长度
+    //因为是逆序读入所以要逆序输出
+    for(int i = res-1;i >= 0;i--) cout<<C[i];
+
+    return 0;
+}
