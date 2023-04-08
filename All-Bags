@@ -1,0 +1,35 @@
+//完全背包问题,未用滚动数组优化的版本
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 1010;
+int dp[N][N];
+int V[N],W[N];
+
+int main()
+{
+    int n,m;cin>>n>>m;
+    for(int i = 1;i <= n;i++) cin>>V[i]>>W[i];
+    //开始dp属性为观察前i件物品，在体积不超过j的情况下的最大重量
+    for(int i = 1;i <= n;i++){
+        for(int j = 0;j <= m;j++){
+            /*
+            最初始的dp思路，但是这种情况的时间空间复杂度过高
+            for(int k = 0;k*V[i] <= j;k++){
+                dp[i][j] = max(dp[i-1][j],dp[i-1][j-k*V[i]]+k*W[i]);
+            }
+            将上述思路细化
+            f[i , j ] = max( f[i-1,j] , f[i-1,j-v]+w ,  f[i-1,j-2*v]+2*w , f[i-1,j-3*v]+3*w , .....)
+            f[i , j-v]= max(            f[i-1,j-v]   ,  f[i-1,j-2*v] + w , f[i-1,j-3*v]+2*w , .....)
+            由上两式，可得出如下递推关系：
+                f[i][j]=max(f[i,j-v]+w , f[i-1][j])
+            */
+            dp[i][j] = dp[i-1][j];
+            if(j >= V[i])
+                dp[i][j] = max(dp[i][j],dp[i-1][j-V[i]]+W[i]);
+        }
+    }
+    cout<<dp[n][m]<<endl;
+
+}
