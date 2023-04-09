@@ -1,0 +1,96 @@
+实现一个单链表，链表初始为空，支持三种操作：
+
+向链表头插入一个数；
+删除第 k
+ 个插入的数后面的数；
+在第 k
+ 个插入的数后插入一个数。
+现在要对该链表进行 M
+ 次操作，进行完所有操作后，从头到尾输出整个链表。
+
+/*
+注意:题目中第 k
+ 个插入的数并不是指当前链表的第 k个数。
+ 例如操作过程中一共插入了 n个数，则按照插入的时间顺序，这 n个数依次为：
+ 第 1 个插入的数，
+ 第 2 个插入的数 …
+ 第 n 个插入的数。
+
+输入格式
+第一行包含整数 M
+，表示操作次数。
+
+接下来 M 行，每行包含一个操作命令，操作命令可能为以下几种：
+
+H x，表示向链表头插入一个数 x。
+D k，表示删除第 k 个插入的数后面的数（当 k为 0 时，表示删除头结点）。
+I k x，表示在第 k 个插入的数后面插入一个数 x（此操作中 k 均大于 0）。
+输出格式
+共一行，将整个链表从头到尾输出。
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 100010;
+
+int n;
+int e[N],ne[N],head,idx;          //ne[i]代表着e[i]所指向的下一个节点，e[i]代表着节点i存储的value值,head是节点，idx是索引
+
+void init()                      //首先初始化头结点和索引
+{
+    head = -1;
+    idx = 0;
+}
+
+void into_head(int x)            //对头结点进行更新
+{
+    e[idx] = x;
+    ne[idx] = head;
+    head = idx;
+    idx++;
+}
+
+void add_into(int k,int x)      //向第k个节点后面插入一个元素
+{
+    e[idx] = x;
+    ne[idx] = ne[k];
+    ne[k] = idx;
+    idx++;
+}
+
+void remove(int k)              //删除一个节点
+{
+    ne[k] = ne[ne[k]];
+}
+
+int main()
+{
+    cin>>n;
+    init();
+    for (int i = 0;i < n;i++){
+        char c;cin>>c;
+        if(c == 'H'){
+            int res;cin>>res;
+            into_head(res);
+        }
+        else if(c == 'D'){
+            int res;cin>>res;
+            if(res == 0) head = ne[head];
+            else remove(res-1);
+        }
+        else{
+            int a,b;cin>>a>>b;
+            add_into(a-1,b);
+        }
+    }
+    for(int i = head;i != -1;i = ne[i]) cout<<e[i]<<' ';
+    /*
+     * 输出，碰到-1说明结束，碰到-1这里结束是因为，开头的时候head被赋值为-1，
+     * 所以在后面的删除或者插入操作中，只有往最后面插入才会更新-1的位置，
+     * 其余方式不会改变，所以输出遍历到-1的时候说明到了这个链表的末尾
+     */
+    cout<<endl;
+    return 0;
+}
