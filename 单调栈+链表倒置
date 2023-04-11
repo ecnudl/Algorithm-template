@@ -1,0 +1,49 @@
+力扣：T1019
+class Solution {
+public:
+        vector<int> ans;
+        stack<int> t;
+    void f(ListNode *node,int cnt){
+        if(node == nullptr){
+            ans.resize(cnt);
+            return;
+        }
+        f(node->next,cnt+1);
+        while(!t.empty() && t.top() <= node->val){
+            t.pop();
+        }
+        if(!t.empty()) ans[cnt] = t.top();
+        t.push(node->val);
+    }
+    vector<int> nextLargerNodes(ListNode* head) {
+        f(head,0);
+        return ans;
+    }
+};
+//下面的做法在单调栈的思路基本一直，但是运用了一个倒置链表的操作也就是reverseList
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head){
+        ListNode *pre = nullptr,*cur = head;
+        while(cur){
+            ListNode *nxt = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = nxt;
+        }
+        return pre;
+    }
+    vector<int> nextLargerNodes(ListNode* head) {
+        head = reverseList(head);
+        vector<int> ans;
+        stack<int> t;
+        for(auto cur = head;cur;cur = cur->next){
+            while(!t.empty() && t.top() <= cur->val)
+                t.pop();
+            ans.push_back(t.empty() ? 0 : t.top());
+            t.push(cur->val);
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};
