@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define all(x) x.begin(),x.end()
+#define pb push_back
+using ll = long long;
+
+const int N = 1000010;
+int f[N];
+int n;
+
+void Sort(int l,int r)
+{
+    int i = l,j = r;
+    int mid = f[(l+r)/2];
+    do{
+        while(f[i] < mid) i++;
+        while(f[j] > mid) j--;
+        if(i <= j){
+            swap(f[i],f[j]);
+            i++;
+            j--;
+        }
+    }while(i <= j);
+    if(l < j) Sort(l,j);
+    if(r > i) Sort(i,r);
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);cout.tie(nullptr);
+    cin>>n;
+    for(int i = 1;i <= n;i++) cin>>f[i];
+    Sort(1,n);
+    for(int i = 1;i <= n;i++) cout<<f[i]<<' ';
+    return 0;
+}
