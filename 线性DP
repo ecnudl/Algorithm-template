@@ -1,0 +1,29 @@
+//题目来源：acwing数字三角形
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 510;
+
+int g[N][N],f[N][N];
+
+int main()
+{
+    int n;cin>>n;
+    for(int i = 1;i <= n;i++){
+        for(int j = 1;j <= i;j++){
+            cin>>g[i][j];
+        }
+    }
+    //对最下面一行进行对应的初始化
+    for(int i = 1;i <= n;i++){
+        f[n][i] = g[n][i];
+    }
+    //线性DP
+    for(int i = n-1;i;i--){
+        for(int j = 1;j <= i;j++){
+            f[i][j] = max(f[i+1][j]+g[i][j],f[i+1][j+1]+g[i][j]);
+        }
+    }
+    cout << f[1][1] << endl;
+}
