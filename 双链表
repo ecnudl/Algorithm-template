@@ -1,0 +1,77 @@
+题目代码在最开始做最难理解的部分便是开头的init部分
+其中0 1并没有什么意义，只是一个界限的符号，在本题目中
+将0设置成为开头，1设置成为结尾，r[0]就是开头右边的节点，也就是第一个节点
+l[1]就是结尾左边的节点，假想双链表为一个环形结构，那么l[1]就是最右边的节点
+同时还要注意开头的时候idx已经为2，所以第一个节点的索引idx其实是2，故在后续处理中
+所有的索引值要+1才是我们想要的索引，题目见acwing
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 100010;
+
+int e[N],l[N],r[N];
+int idx;
+
+void init()
+{
+    l[1] = 0;//head
+    r[0] = 1;//tail
+    idx = 2;
+}
+
+void add(int k,int n)
+{
+    e[idx] = n;
+    r[idx] = r[k];
+    l[idx] = k;
+    l[r[k]] = idx;
+    r[k] = idx;
+    idx++;
+}
+
+void remove(int k)
+{
+    l[r[k]] = l[k];
+    r[l[k]] = r[k];
+}
+
+int main()
+{
+    int n;cin >> n;
+    init();
+    for(int i = 0;i < n;i++)
+    {
+        string s;cin >> s;
+        if(s == "R")
+        {
+            int num;cin >> num;
+            add(l[1],num);
+        }
+        else if(s == "L")
+        {
+            int num;cin >> num;
+            add(0,num);
+        }
+        else if(s == "D")
+        {
+            int num;cin >> num;
+            remove(num+1);
+        }
+        else if(s == "IL")
+        {
+            int k,num;
+            cin >> k >> num;
+            add(l[k+1],num);
+        }
+        else
+        {
+            int k,num;
+            cin >> k >> num;
+            add(k+1,num);
+        }
+    }
+    for(int i = r[0];i != 1;i = r[i]) cout<<e[i]<<' ';
+    
+    return 0;
+}
