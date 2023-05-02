@@ -17,6 +17,12 @@ int ans = N; //表示重心的所有的子树中，最大的子树的结点数�
 
 bool st[N]; //记录节点是否被访问过，访问过则标记为true
 
+//对于邻接表的存储有两种方式，本题目采用的是数组的模拟，另一种用stl容器存储的更为通俗易懂
+/*
+vector<int> p[N];
+p[a].push_back(b);
+*/
+
 //a所对应的单链表中插入b  a作为根 
 void add(int a, int b) {
     e[idx] = b, ne[idx] = h[a], h[a] = idx++;
