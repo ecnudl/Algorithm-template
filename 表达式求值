@@ -1,0 +1,61 @@
+//用两个栈求值
+#include <bits/stdc++.h>
+
+using namespace std;
+
+stack<int> num;     //存储数字
+stack<char> op;     //存储运算符
+
+void eval()        //计算函数
+{
+    int a = num.top();
+    num.pop();
+    int b = num.top();
+    num.pop();
+    char c = op.top();
+    op.pop();
+    if(c == '+') b = a+b;
+    else if(c == '-') b = b-a;
+    else if(c == '*') b = b*a;
+    else b = b/a;
+    num.push(b);
+}
+
+int main()
+{
+    string s;
+    cin >> s;
+    unordered_map<char,int> mp{{'+',1},{'-',1},{'*',2},{'/',2}};        //确立优先级
+    for(int i = 0;i < s.length();i++)
+    {
+        if(isdigit(s[i]))                         //读取数字
+        {
+            int x = 0,j = i;
+            for(;j < s.length();j++)
+            {
+                if(!isdigit(s[j])) break;
+                x = x*10 + s[j]-'0';
+            }
+            i = j-1;
+            num.push(x);
+        }
+        else if(s[i] == '(')                   //左括号直接压入
+        {
+            op.push(s[i]);
+        }
+        else if(s[i] == ')')                  //读到右括号就开始不断处理，直到左括号为止
+        {
+            while(op.top() != '(')
+                eval();
+            op.pop();
+        }
+        else
+        {                                   //运算符优先级问题
+            while(op.size() && mp[op.top()] >= mp[s[i]]) eval();
+            op.push(s[i]);
+        }
+    }
+    while(op.size()) eval();
+    cout << num.top();
+    return 0;
+}
