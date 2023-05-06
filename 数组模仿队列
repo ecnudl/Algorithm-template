@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 100010;
+int hh,tt = -1;
+int q[N];
+
+int main()
+{
+    int n;cin >> n;
+    while(n--)
+    {
+        string s;
+        cin >> s;
+        if(s == "push")
+        {
+            int res;cin >> res;
+            q[++tt] = res;
+        }
+        else if(s == "pop")
+        {
+            hh++;
+        }
+        else if(s == "query")
+        {
+            cout << q[hh] << endl;
+        }
+        else
+        {
+            if(hh <= tt) cout << "NO" << endl;
+            else cout << "YES" << endl;
+        }
+    }
+    return 0;
+}
