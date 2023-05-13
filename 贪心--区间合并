@@ -1,0 +1,80 @@
+#1：最为经典而且基础的解法：
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 100010;
+
+struct Range{
+    int l,r;
+    bool operator<(const Range& M)
+    {
+        return l < M.l;
+    }
+}range[N];
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    
+    int n; cin >> n;
+    for(int i = 0;i < n;i++)
+        cin >> range[i].l >> range[i].r;
+        
+    sort(range,range+n);
+    int ans = 0;
+    priority_queue<int, vector<int>, greater<int> > heap;         //小根堆
+    for(int i = 0;i < n;i++)
+    {
+        if(heap.empty() || heap.top() >= range[i].l)
+        {
+            heap.push(range[i].r);
+            ans++;
+        }
+        else
+        {
+            heap.pop();
+            heap.push(range[i].r);
+        }
+    }
+    cout << ans;
+    
+    return 0;
+}
+#2：教室思想：
+//有若干个活动，第i个活动开始和结束的时间为[Si,Fi]，同一个教室安排的活动之间不能交叠，求要安排所有活动，最少需要几个教室
+//把所有活动的开始和结束时间进行排序，遇到开始的时间就把教室的个数+1，遇到结束的时间就-1，峰值就是所需答案
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+const int N = 100100;
+
+int n;
+int b[2 * N], idx;
+
+int main()
+{
+    scanf ("%d", &n);
+    for(int i = 0; i < n; i ++)
+    {
+        int l, r;
+        scanf("%d %d", &l, &r);
+        b[idx ++] = l * 2;//标记左端点为偶数。
+        b[idx ++] = r * 2 + 1;// 标记右端点为奇数。
+    }
+
+    sort(b, b + idx);
+
+    int res = 1, t = 0;
+    for(int i = 0; i < idx; i ++)
+    {
+        if(b[i] % 2 == 0) t ++;
+        else t --;
+        res = max(res, t);
+    }
+    printf ("%d\n", res);
+    return 0;
+}
