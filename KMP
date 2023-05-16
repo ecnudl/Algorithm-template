@@ -1,0 +1,38 @@
+原代码，理解起来非常的抽象的一个算法，具体理解可参考以下几篇文章
+https://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html
+https://www.acwing.com/solution/content/14666/
+而我自己的见解在此代码之后
+#include <iostream>
+
+using namespace std;
+
+const int N = 10010, M = 100010;
+
+int n, m;
+int ne[N];
+char s[M], p[N];
+
+int main()
+{
+    cin >> n >> p + 1 >> m >> s + 1;
+
+    for (int i = 2, j = 0; i <= n; i ++ )
+    {
+        while (j && p[i] != p[j + 1]) j = ne[j];
+        if (p[i] == p[j + 1]) j ++ ;
+        ne[i] = j;
+    }
+
+    for (int i = 1, j = 0; i <= m; i ++ )
+    {
+        while (j && s[i] != p[j + 1]) j = ne[j];
+        if (s[i] == p[j + 1]) j ++ ;
+        if (j == n)
+        {
+            printf("%d ", i - n);
+            j = ne[j];
+        }
+    }
+
+    return 0;
+}
