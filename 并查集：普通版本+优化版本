@@ -1,4 +1,4 @@
-//并查集，普通版+优化版
+//并查集，普通版+优化版+AcWing版
 #include <bits/stdc++.h>
 using namespace std;
 const int maxn = 1050;
@@ -72,5 +72,45 @@ int main()
                 ans++;
         cout<<ans<<endl;
     }
+    return 0;
+}
+
+Acwing：
+#include <iostream>
+
+using namespace std;
+
+const int N = 100010;
+int p[N];
+
+int find(int x)
+{
+    if(x != p[x]) p[x] = find(p[x]);
+    return p[x];
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int n,m;
+    cin >> n >> m;
+    for(int i = 1;i <= n;i++) p[i] = i;
+    for(int i = 0;i < m;i++)
+    {
+        string s;cin >> s;
+        int a,b;
+        cin >> a >> b;
+        if(s == "M")
+        {
+            p[find(a)] = find(b);
+        }
+        else
+        {
+            if(find(a) == find(b)) cout << "Yes" << endl;
+            else cout << "No" << endl;
+        }
+    }
+    
     return 0;
 }
