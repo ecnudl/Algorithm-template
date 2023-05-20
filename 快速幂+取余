@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+#define int long long
+
+using namespace std;
+
+int a,b,q;
+int ans = 1;
+
+void quick_pow()
+{
+    int base = a;
+    while(b > 0)
+    {
+        if(b & 1)
+        {
+            ans *= base;
+            ans %= q;
+        }
+        base *= base;
+        base %= q;
+        b >>= 1;
+    }
+}
+
+signed main()
+{
+    cin >> a >> b >> q;
+    int bb = b;
+    quick_pow();
+    cout << a << '^' << bb << " mod " << q << '=' << ans;
+
+    return 0;
+}
