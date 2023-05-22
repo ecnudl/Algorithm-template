@@ -1,0 +1,26 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<algorithm>
+
+using namespace std;
+
+struct Point
+{
+	double x,y;
+	
+	Point () {}
+	Point (double X,double Y) : x(X),y(Y) {}
+	Point operator - (const Point a)const { return Point(x-a.x,y-a.y); }
+	double operator * (const Point a)const { return x*a.y-y*a.x; }
+	void read() { scanf("%lf %lf",&x,&y); }
+}A,B,C,D;
+
+int main()
+{
+	A.read(),B.read(),C.read(),D.read();
+	double k1=(B-A)*(D-A),k2=(C-B)*(D-B),k3=(A-C)*(D-C);
+	if(k1*k2<0||k1*k3<0) puts("out");
+	else puts("in");
+	return 0;
+}
