@@ -32,4 +32,48 @@ int main()
     return 0;
 }
 //第二种逆序dp
-//第三种记忆化搜搜
+//第三种记忆化搜索
+还有一种石子合并分方式是石子成环，具体题目可以见洛谷P1880
+这时的做法就是把n个成环的石子看成一个长度为2n的石子链，这样然后正常dp即可，有一个关键点在于区间dp并不能用memset初始化dp数组，应该是用到那个就把那个进行初始化。
+P1880具体代码如下：
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 210;
+
+int Max[N][N],Min[N][N];
+int f[N],s[N];
+int n;
+
+int main()
+{
+    cin >> n;
+    for(int i = 1;i <= n;i++)
+    {
+        cin >> f[i];
+        f[i+n] = f[i];
+    }
+    for(int i = 1;i <= n+n;i++) s[i] = s[i-1] + f[i];
+    for(int len = 2;len <= n;len++)
+    {
+        for(int i = 1;i + len - 1 <= n+n;i++)
+        {
+            int j = i+len-1;
+            Max[i][j] = -1;
+            Min[i][j] = 0x3f3f3f3f;
+            for(int k = i;k < j;k++)
+            {
+                Max[i][j] = max(Max[i][j],Max[i][k] + Max[k+1][j] + s[j] - s[i-1]);
+                Min[i][j] = min(Min[i][j],Min[i][k] + Min[k+1][j] + s[j] - s[i-1]);
+            }
+        }
+    }
+    int MAX = -1;
+    int MIN = 0x3f3f3f3f;
+    for(int i = 1;i <= n;i++)
+    {
+        MAX = max(Max[i][i+n-1],MAX);
+        MIN = min(Min[i][i+n-1],MIN);
+    }
+    cout << MIN << endl << MAX << endl;
+    return 0;
+}
