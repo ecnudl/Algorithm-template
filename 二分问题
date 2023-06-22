@@ -35,3 +35,6 @@ int find(vector<int> &ch,int target)
     return r;
 }
 查找是否存在的函数则忽略不写,用第一个函数或者第二个优化即可达到
+
+关于lower和upperbound的一些小tips,比如说如果要在一个vector中求解有多少个数字小于等于n，其实直接upper_bound之后减去begin()就可以了。
+因为-begin其实相当于减1，虽然说upperbound往后多找了一个，但是因为也减了1，所以直接得出的就是答案。
