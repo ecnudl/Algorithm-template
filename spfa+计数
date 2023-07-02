@@ -1,0 +1,94 @@
+spfa求最短路的算法：
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 1e5+10;
+struct node
+{
+    int idx;
+    int w;
+};
+vector<node> P[N];
+int dist[N];
+bool st[N];
+int n,m;
+
+void spfa()
+{
+    memset(dist,0x3f,sizeof dist);
+    dist[1] = 0;
+    queue<int> q;
+    q.push(1);
+    st[1] = true;
+    while(q.size())
+    {
+        int t = q.front();
+        q.pop();
+        st[t] = false;
+        for(int i = 0;i < P[t].size();i++)
+        {
+            int j = P[t][i].idx;
+            int dis = P[t][i].w;
+            if(dist[j] > dist[t] + dis)
+            {
+                dist[j] = dist[t] + dis;
+                if(!st[j])
+                {
+                    q.push(j);
+                    st[j] = true;
+                }
+            }
+        }
+    }
+}
+
+int main()
+{
+    cin >> n >> m;
+    while(m --)
+    {
+        int a,b,w;
+        cin >> a >> b >> w;
+        P[a].push_back({b,w});
+    }
+    spfa();
+    if(dist[n] == 0x3f3f3f3f) puts("impossible");
+    else cout << dist[n] << endl;
+    return 0;
+}
+spfa也经常用来判断是否存在负环：只要加一个cnt数组进行计数，并运用抽屉原理来判断是否会更新超过n次就可
+bool spfa()
+{
+    memset(dist,0x3f,sizeof dist);
+    dist[1] = 0;
+    queue<int> q;
+    for(int i = 1;i <= n;i++)
+    {
+        q.push(i);
+        st[i] = true;
+    }
+    while(q.size())
+    {
+        int t = q.front();
+        q.pop();
+        st[t] = false;
+        for(int i = 0;i < P[t].size();i++)
+        {
+            int j = P[t][i].idx;
+            int dis = P[t][i].w;
+            if(dist[j] > dist[t] + dis)
+            {
+                dist[j] = dist[t] + dis;
+                cnt[j] = cnt[t] + 1;
+                if(cnt[j] >= n) return true;
+                if(!st[j])
+                {
+                    q.push(j);
+                    st[j] = true;
+                }
+            }
+        }
+    }
+    return false;
+}
