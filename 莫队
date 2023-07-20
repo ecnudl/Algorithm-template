@@ -1,0 +1,74 @@
+// 样板题，莫队的时间复杂度在O(n*sqrt(n))，设计分块数组以及排序，莫队的优化在最后，多和数据的离散化一同出现
+const int N = 2e5 + 10,M = 1e6 + 10;
+ll f[N],cnt[M],belong[N],ans[N],cur;
+int n,m;
+struct edge
+{
+    int l,r,id;
+}q[N];
+
+bool cmp(edge a,edge b)
+{
+    return belong[a.l] == belong[b.l] ? a.r < b.r : a.l < b.l;
+}
+
+void add(int pos)
+{
+    if(!cnt[f[pos]]) cur++;
+    cnt[f[pos]]++;
+}
+
+void del(int pos)
+{
+    cnt[f[pos]]--;
+    if(!cnt[f[pos]]) cur--;
+}
+
+void solve() {
+    cin >> n;
+    for(int i = 1;i <= n;i++) cin >> f[i];
+    int size = sqrt(n);
+    int sum = ceil((double)n / sqrt(n));
+    for(int i = 1;i <= sum;i++)
+        for(int j = (i - 1)*size + 1;j <=i * size;j++)
+            belong[j] = i;
+    cin >> m;
+    for(int i = 1;i <= m;i++)
+    {
+        cin >> q[i].l >> q[i].r;
+        q[i].id = i;
+    }
+    sort(q + 1,q + 1 + m,cmp);
+    int l = 1,r = 0;
+    for(int i = 1;i <= m;i++)
+    {
+        int ql = q[i].l;
+        int qr = q[i].r;
+        while(l < ql) del(l++);
+        while(l > ql) add(--l);
+        while(r < qr) add(++r);
+        while(r > qr) del(r--);
+        ans[q[i].id] = cur;
+    }
+    for(int i = 1;i <= m;i++) cout << ans[i] << endl;
+}
+
+signed main(void) {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    int tc = 1;
+//    cin >> tc;
+    for (int i = 1; i <= tc; i++) {
+        solve();
+    }
+    return 0;
+}
+//可供优化及替代的代码
+int cmp(query a, query b) {
+	return (belong[a.l] ^ belong[b.l]) ? belong[a.l] < belong[b.l] : ((belong[a.l] & 1) ? a.r < b.r : a.r > b.r);
+}
+while(l < ql) now -= !--cnt[aa[l++]];
+while(l > ql) now += !cnt[aa[--l]]++;
+while(r < qr) now += !cnt[aa[++r]]++;
+while(r > qr) now -= !--cnt[aa[r--]];
