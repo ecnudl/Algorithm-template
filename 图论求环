@@ -1,0 +1,84 @@
+图论求环有两种方式和思路，第一种是用dfs求环，第二种是用并查集，二者相对来说并查集可能更为高效但是在代码难度方面用dfs会更加简单
+这里以atcoder abc-contest311-C为例：
+1. dfs求环：vis数组用来存储当前该节点是否判断过，ins数组是用来存储当前节点是否正在这个环中，一旦判断到环就可以直接exit，如果当前节点构成不了环，就再让它出队
+const int N = 2e5 + 10;
+bool vis[N],ins[N];
+VI e[N];
+int ne[N],n;
+
+void dfs(int x)
+{
+    vis[x] = true;
+    ins[x] = true;
+    for(auto t : e[x])
+    {
+        if(ins[t])
+        {
+            VI ans;
+            int u = ne[t];
+            while(u != t)
+            {
+                ans.pb(u);
+                u = ne[u];
+            }
+            ans.pb(t);
+            cout << ans.size() << endl;
+            for(auto k : ans) cout << k << " ";
+            exit(0);
+        }
+        if(vis[t]) continue;
+        dfs(t);
+    }
+    ins[x] = false;
+}
+
+void solve() {
+    cin >> n;
+    for(int i = 1;i <= n;i++)
+    {
+        int x;cin >> x;
+        e[i].pb(x);
+        ne[i] = x;
+    }
+    for(int i = 1;i <= n;i++) if(!vis[i]) dfs(i);
+}
+2. 并查集求环，最开始做时困惑的点在于一个点的入度是可以大于1的，这样限制了回溯求环的思路。这时我们应该想到每个点的出度为1所以一次下手就可
+const int N = 2e5 + 10;
+int p[N],ne[N],ans[N];
+int n,cnt;
+ 
+int find(int x)
+{
+    if(x != p[x]) p[x] = find(p[x]);
+    return p[x];
+}
+ 
+void solve() {
+    cin >> n;
+    for(int i = 1;i <= n;i++) p[i] = i;
+    for(int i = 1;i <= n;i++)
+    {
+        int x,a,b;
+        cin >> x;
+        a = find(i);
+        b = find(x);
+        if(a == b)
+        {
+            cnt = 1;
+            for(int j = x;j != i;j = ne[j])
+            {
+                ans[cnt++] = j;
+            }
+            cout << cnt << endl;
+            for(int k = 1;k < cnt;k++) cout << ans[k] << " ";
+            cout << i;
+            return;
+        }
+        else
+        {
+            ne[i] = x;
+            p[b] = a;
+        }
+    }
+}
+//从本题目的运行时间和内存空间来看，并查集要优于dfs
