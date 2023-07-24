@@ -1,0 +1,86 @@
+模板：懒标记+取模版
+
+const int N = 1e6 + 6;
+struct node{
+    ll l,r,sum,add,mul;
+}tr[N];
+int w[N],n,m,mod;
+
+void pushup(node &u,node & l,node & r)
+{
+    u.sum = (l.sum + r.sum) % mod;
+}
+
+void pushup(ll u)
+{
+    pushup(tr[u],tr[u << 1],tr[u << 1 | 1]);
+}
+
+
+void build(ll u,ll l,ll r)
+{
+    tr[u].l = l,tr[u].r = r,tr[u].mul = 1,tr[u].add = 0;
+    if(l == r)
+    {
+        tr[u].sum = w[l] % mod;
+        return;
+    }
+    ll mid = l + r >> 1;
+    build(u << 1,l,mid);
+    build(u << 1 | 1,mid + 1,r);
+    pushup(u);
+}
+
+void spread(ll p)
+{
+    ll ls = p << 1,rs = p << 1 | 1;
+    tr[ls].sum = (ll)(tr[ls].sum * tr[p].mul % mod + ((tr[ls].r - tr[ls].l + 1) % mod * tr[p].add)) % mod;
+    tr[rs].sum = (ll)(tr[rs].sum * tr[p].mul % mod + ((tr[rs].r - tr[rs].l + 1) % mod * tr[p].add)) % mod;
+    tr[ls].mul = (ll)(tr[ls].mul * tr[p].mul) % mod;
+    tr[rs].mul = (ll)(tr[rs].mul * tr[p].mul) % mod;
+    tr[ls].add = (ll)(tr[ls].add * tr[p].mul + tr[p].add) % mod;
+    tr[rs].add = (ll)(tr[rs].add * tr[p].mul + tr[p].add) % mod;
+    tr[p].add = 0;tr[p].mul = 1;
+}
+
+void updateadd(ll u,ll l,ll r,ll k)
+{
+    if(l <= tr[u].l && r >= tr[u].r)
+    {
+        tr[u].sum = (ll) (tr[u].sum + k * (tr[u].r - tr[u].l + 1)) % mod;
+        tr[u].add  = (tr[u].add + k) % mod;
+        return;
+    }
+    spread(u);
+    ll mid = (tr[u].l + tr[u].r) >> 1;
+    if(l <= mid) updateadd(u << 1,l,r,k);
+    if(r > mid) updateadd(u << 1 | 1,l,r,k);
+    pushup(u);
+}
+
+void updatemul(ll u,ll l,ll r,ll k)
+{
+    if(l <= tr[u].l && r >= tr[u].r)
+    {
+        tr[u].add = (tr[u].add * k) % mod;
+        tr[u].sum = (tr[u].sum * k) % mod;
+        tr[u].mul = (tr[u].mul * k) % mod;
+        return;
+    }
+    spread(u);
+    ll mid = (tr[u].l + tr[u].r) >> 1;
+    if(l <= mid) updatemul(u << 1,l,r,k);
+    if(r > mid) updatemul(u << 1 | 1,l,r,k);
+    pushup(u);
+}
+
+ll query(ll u,ll l,ll r)
+{
+    if(l <= tr[u].l && r >= tr[u].r) return tr[u].sum % mod;
+    spread(u);
+    ll mid = (tr[u].r + tr[u].l) >> 1;
+    ll ans = 0;
+    if(l <= mid) ans =  query(u << 1,l,r) % mod;
+    if(r > mid) ans = (ans + query(u << 1 | 1,l,r)) % mod;
+    return ans % mod;
+}
