@@ -1,56 +1,71 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
+算法基础课的最原始拓补排序
 const int N = 100010;
-
 int d[N];
 int n,m;
 vector<int> p[N];
 vector<int> ans;
 queue<int> q;
-
-void add(int a,int b)
-{
+void add(int a,int b) {
     p[a].push_back(b);
     d[b]++;
 }
-
-bool topsort()
-{
-    for(int i = 1;i <= n;i++)
-    {
+bool topsort() {
+    for(int i = 1;i <= n;i++) {
         if(!d[i])
         q.push(i);
     }
-    while(q.size())
-    {
+    while(q.size()) {
         int t = q.front();
         q.pop();
         ans.push_back(t);
-        for(int i = 0;i < p[t].size();i++)
-        {
+        for(int i = 0;i < p[t].size();i++) {
             d[p[t][i]]--;
             if(d[p[t][i]] == 0) q.push(p[t][i]);
         }
     }
-    if(ans.size() == n) return true;
+    if(ans.size() == n) return true;           //这时ans中存储的便是拓补序列
     else return false;
 }
 
-int main()
-{
+# 拓补排序求是否存在环的问题
+对于一个有向图，可以先设置一个in数组来记录每一个节点的入度，遍历完一遍之后再将入度为1的点压入队列中
+之后对这个队列进行bfs，没遍历一个点就将其的入度减一，之后判断如果其入度变为0，就再压入队列，同时设置一个
+cnt来记录bfs的次数，如果bfs结束之后cnt小于总节点个数，那么就必定存在一个环在这个图当中
+以下是CF919D的一个例题
+void solve() {
     cin >> n >> m;
-    for(int i = 0;i < m;i++)
+    cin >> (s + 1);
+    for(int i = 1;i <= n;i++) num[i] = s[i] - 'a',f[i][num[i]]++;
+    for(int i = 1;i <= m;i++)
     {
         int a,b;
         cin >> a >> b;
-        add(a,b);
+        in[b]++;
+        e[a].pb(b);
     }
-    if(topsort())
+    queue<int> q;
+    for(int i = 1;i <= n;i++) if(!in[i]) q.push(i);
+    while(!q.empty())
     {
-        for(auto it : ans) cout<<it<<' ';
+        int h = q.front();
+        q.pop();
+        cnt++;
+        for(auto k : e[h]) {
+            int tmp = num[k];
+            for(int i = 0;i < 26;i++) {
+                if(i == tmp) f[k][i] = max(f[h][i] + 1,f[k][i]);
+                else f[k][i] = max(f[h][i],f[k][i]);
+            }
+            in[k]--;
+            if(!in[k]) q.push(k);
+        }
     }
-    else puts("-1");
-    return 0;
+    if(cnt < n) cout << -1 << endl;
+    else {
+        int ans = -1;
+        for(int i = 1;i <= n;i++)
+            for(int j = 0;j < 26;j++)
+                ans = max(ans,f[i][j]);
+        cout << ans << endl;
+    }
 }
