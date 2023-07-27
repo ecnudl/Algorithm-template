@@ -84,3 +84,76 @@ ll query(ll u,ll l,ll r)
     if(r > mid) ans = (ans + query(u << 1 | 1,l,r)) % mod;
     return ans % mod;
 }
+扫描线：
+const int N = 1e5 + 10;
+int n;
+vector<ll> ys;
+struct seg{
+    ll x,y1,y2;
+    int k;
+    bool operator < (const seg & M) const {
+        return x < M.x;
+    }
+}seg[N * 8];
+struct node{
+    int l,r;
+    int cnt;
+    ll len;
+}tr[N * 8];
+int find(ll y)
+{
+    return lower_bound(ys.begin(),ys.end(),y) - ys.begin();
+}
+void pushup(int u)
+{
+    if(tr[u].cnt) tr[u].len = ys[tr[u].r + 1] - ys[tr[u].l];
+    else if(tr[u].l != tr[u].r)
+        tr[u].len = tr[u << 1].len + tr[u << 1 | 1].len;
+    else tr[u].len = 0;
+}
+void modify(int u,int l,int r,int k)
+{
+    if(tr[u].l >= l && tr[u].r <= r)
+    {
+        tr[u].cnt += k;
+        pushup(u);
+    }
+    else
+    {
+        int mid = (tr[u].l + tr[u].r) >> 1;
+        if(l <= mid) modify(u << 1,l,r,k);
+        if(r > mid) modify(u << 1 | 1,l,r,k);
+        pushup(u);
+    }
+}
+void build(int u,int l,int r)
+{
+    tr[u].l = l;tr[u].r = r;
+    if(l == r) return ;
+    int mid = l + r >> 1;
+    build(u << 1,l,mid);
+    build(u << 1 | 1,mid + 1,r);
+}
+void solve() {
+    cin >> n;
+    for(int i = 0,j = 0;i < n;i++)
+    {
+        ll x1,x2,y1,y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        seg[j++] = {x1,y1,y2,1};
+        seg[j++] = {x2,y1,y2,-1};
+        ys.pb(y1);ys.pb(y2);
+    }
+    sort(ys.begin(),ys.end());
+    ys.erase(unique(ys.begin(),ys.end()),ys.end());
+    build(1,0,ys.size() - 2);
+    sort(seg,seg + n * 2);
+    ll res = 0;
+    for(int i = 0;i < n + n;i++)
+    {
+        if(i > 0) res += tr[1].len * (seg[i].x - seg[i - 1].x);
+        modify(1,find(seg[i].y1),find(seg[i].y2) - 1,seg[i].k);
+    }
+    cout << res << endl;
+}
+具体解析见：https://www.acwing.com/solution/content/135911/
