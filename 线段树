@@ -6,7 +6,7 @@ struct node{
 }tr[N];
 int w[N],n,m,mod;
 
-void pushup(node &u,node & l,node & r)
+void pushup(node &u,node & l,node & r)  //更新父节点
 {
     u.sum = (l.sum + r.sum) % mod;
 }
@@ -17,7 +17,7 @@ void pushup(ll u)
 }
 
 
-void build(ll u,ll l,ll r)
+void build(ll u,ll l,ll r)   //建树
 {
     tr[u].l = l,tr[u].r = r,tr[u].mul = 1,tr[u].add = 0;
     if(l == r)
@@ -31,7 +31,7 @@ void build(ll u,ll l,ll r)
     pushup(u);
 }
 
-void spread(ll p)
+void spread(ll p)    //pushdown函数进行向下传标记
 {
     ll ls = p << 1,rs = p << 1 | 1;
     tr[ls].sum = (ll)(tr[ls].sum * tr[p].mul % mod + ((tr[ls].r - tr[ls].l + 1) % mod * tr[p].add)) % mod;
@@ -43,7 +43,20 @@ void spread(ll p)
     tr[p].add = 0;tr[p].mul = 1;
 }
 
-void updateadd(ll u,ll l,ll r,ll k)
+void modify(ll u,ll x,ll k)    //单点修改
+{
+    if(tr[u].r == tr[u].l && x == tr[u].r)
+    {
+        tr[u].num = k % mod;
+        return;
+    }
+    ll mid = (tr[u].l + tr[u].r) >> 1;
+    if(x <= mid) modify(u << 1,x,k);
+    if(x > mid) modify(u << 1 | 1,x,k);
+    pushup(u);
+}
+
+void updateadd(ll u,ll l,ll r,ll k)       //区间修改
 {
     if(l <= tr[u].l && r >= tr[u].r)
     {
@@ -74,7 +87,7 @@ void updatemul(ll u,ll l,ll r,ll k)
     pushup(u);
 }
 
-ll query(ll u,ll l,ll r)
+ll query(ll u,ll l,ll r)      //询问操作
 {
     if(l <= tr[u].l && r >= tr[u].r) return tr[u].sum % mod;
     spread(u);
