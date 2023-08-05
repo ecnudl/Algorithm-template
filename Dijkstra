@@ -25,41 +25,35 @@ int Dijkstra()
     if(dist[n]==0x3f3f3f3f) return -1;  //如果第n个点路径为无穷大即不存在最低路径
     return dist[n];
 }
-//用堆也就是优先队列优化的版本，用stl存图
+//用堆也就是优先队列优化的版本，用stl存图，用cnt数组记录边数量
 typedef pair<int,int> PII;
 const int N = 150010;
 vector<PII> P[N];         //存图
 bool st[N];
-int dist[N];
+int dist[N],cnt[N];
 int n,m;
-int dijskta()
+priority_queue<PII,vector<PII>,greater<PII> > heap;
+void Dijkstra()
 {
-    memset(dist,0x3f,sizeof(dist));
+    memset(dist,0x3f,sizeof dist);
     dist[1] = 0;
-    
-    priority_queue<PII,vector<PII>,greater<PII> >heap;
-    heap.push({0,1});                              //存下节点1到节点1的距离为0
-    while(heap.size())
+    heap.push({0,1});
+    while(!heap.empty())
     {
         auto t = heap.top();
         heap.pop();
-        int ver = t.second,d = t.first;            //ver代表节点，d代表1到ver的距离
-        if(st[ver]) continue;
-        for(int i = 0;i < P[ver].size();i++)
+        if(vis[t.sc]) continue;
+        vis[t.sc] = true;
+        for(auto i: e[t.sc])
         {
-            int j = P[ver][i].first;                   
-            if(dist[j] > d + P[ver][i].second) 
+            int idx = i.sc,w = i.fs;
+            if(dist[idx] == dist[t.sc] + w) cnt[idx]++;
+            if(dist[idx] > dist[t.sc] + w)
             {
-                dist[j] = d + P[ver][i].second;
-                heap.push({dist[j],j});
+                cnt[idx] = 1;
+                dist[idx] = dist[t.sc] + w;
+                heap.push({dist[idx],idx});
             }
         }
-        st[ver] = true;
     }
-    if(dist[n] == 0x3f3f3f3f) return -1;
-    return dist[n];
-}    
-    cout << ans << endl;
-    
-    return 0;
 }
