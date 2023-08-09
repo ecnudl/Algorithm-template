@@ -1,0 +1,108 @@
+树上任意两节点之间最长的简单路径即为树的「直径」。
+  性质：
+  > 一棵树可以有多条直径，它们的长度相等
+  > 若树上所有边边权均为正，则树的所有直径中点重合
+法一：DFS:
+const int N = 10000 + 10;
+
+int n, c, d[N];
+vector<int> E[N];
+
+void dfs(int u, int fa) {
+  for (int v : E[u]) {
+    if (v == fa) continue;
+    d[v] = d[u] + 1;
+    if (d[v] > d[c]) c = v;
+    dfs(v, u);
+  }
+}
+
+int main() {
+  scanf("%d", &n);
+  for (int i = 1; i < n; i++) {
+    int u, v;
+    scanf("%d %d", &u, &v);
+    E[u].push_back(v), E[v].push_back(u);
+  }
+  dfs(1, 0);
+  d[c] = 0, dfs(c, 0);
+  printf("%d\n", d[c]);
+  return 0;
+}
+法二：BFS
+int n, u, v;
+vector<int> map[1111111];
+int book[1111111];
+int dis[1111111], tmax, des;
+//求最长路径还是bfs更简单
+void bfs(int root) {
+    memset(book, 0, sizeof(book));
+    memset(dis, 0, sizeof(dis));
+    queue<int> q;
+    book[root] = 1;
+    q.push(root);
+    while (q.size()) {
+        int t = q.front();
+        q.pop();
+        if (dis[t] > tmax) {
+            tmax = dis[t];
+            des = t;
+        }
+        for (auto i : map[t]) {
+            if (!book[i]) {
+                book[i] = 1;
+                q.push(i);
+                dis[i] = dis[t] + 1;
+            }
+        }
+    }
+}
+int main() {
+    cin >> n;
+    if(!n){
+        cout<<0;
+        return 0;
+    }
+    n--;
+    while (n--) {
+        cin >> u >> v;
+        map[u].push_back(v);
+        map[v].push_back(u);
+    }
+    bfs(1);
+    bfs(des);
+    cout << tmax;
+    return 0;
+}
+法三：树形DP
+const int N = 10000 + 10;
+
+int n, d = 0;
+int d1[N], d2[N];
+vector<int> E[N];
+
+void dfs(int u, int fa) {
+  d1[u] = d2[u] = 0;
+  for (int v : E[u]) {
+    if (v == fa) continue;
+    dfs(v, u);
+    int t = d1[v] + 1;
+    if (t > d1[u])
+      d2[u] = d1[u], d1[u] = t;
+    else if (t > d2[u])
+      d2[u] = t;
+  }
+  d = max(d, d1[u] + d2[u]);
+}
+
+int main() {
+  scanf("%d", &n);
+  for (int i = 1; i < n; i++) {
+    int u, v;
+    scanf("%d %d", &u, &v);
+    E[u].push_back(v), E[v].push_back(u);
+  }
+  dfs(1, 0);
+  printf("%d\n", d);
+  return 0;
+}
