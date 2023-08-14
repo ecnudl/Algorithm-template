@@ -1,0 +1,83 @@
+typedef unsigned long long ULL;
+const int N = 100010;
+const int P = 131;
+char str[N];
+int n,m;
+ULL h[N],p[N];
+
+ULL count(int l,int r)
+{
+    return h[r] - h[l-1] * p[r - l + 1];      //此处运用一个移位思想，就比如要取出数字1234中的34，就应该让1234-12*100，就是这种原理取出l,r之间的哈希值
+}
+
+int main()
+{
+    cin >> n >> m >> str+1;
+    p[0] = 1;
+    for(int i = 1;i <= n;i++)
+    {
+        p[i] = P * p[i-1];
+        h[i] = h[i-1] * P + str[i];
+    }
+    
+    while(m--)
+    {
+        int l1,r1,l2,r2;
+        cin >> l1 >> r1 >> l2 >> r2;
+        if(count(l1,r1) == count(l2,r2)) puts("Yes");
+        else puts("No");
+    }
+    
+    return 0;
+}
+
+双哈希：
+const int CNT = 2;
+ll base[CNT] = {29,21};
+ll Mod[CNT] = {int(1e9 + 9),998244353};
+
+struct string_Hash{
+    char s[N];
+    int ls;
+    ll hsh[CNT][N];
+    ll pwMod[CNT][N];
+
+    void init() {
+        ls = 0;
+        for(int i = 0;i < CNT;i++) {
+            hsh[i][0] = 0;
+            pwMod[i][0] = 1;
+        }
+    }
+
+    string_Hash() { init(); }
+
+    void extend(char c)
+    {
+        s[++ls] = c;
+        for(int i = 0;i < CNT;i++)
+        {
+            pwMod[i][ls] = 1ll * pwMod[i][ls - 1] * base[i] % Mod[i];
+            hsh[i][ls] = (1ll * hsh[i][ls - 1] * base[i] + c) % Mod[i];
+        }
+    }
+
+    vector<ll> get_hash(int l,int r)
+    {
+        vector<ll> ans(CNT,0);
+        for(int i = 0;i < CNT;i++) {
+            ll t = (hsh[i][r] - 1ll * hsh[i][l - 1] * pwMod[i][r - l + 1]) % Mod[i];
+            t = (t + Mod[i]) % Mod[i];
+            ans[i] = t;
+        }
+        return ans;
+    }
+};
+
+bool equal(const vector<ll> &h1,const vector<ll> & h2)
+{
+    assert(SZ(h1) == SZ(h2));
+    for(auto i = 0;i < SZ(h1);i++)
+        if(h1[i] != h2[i]) return false;
+    return true;
+}
