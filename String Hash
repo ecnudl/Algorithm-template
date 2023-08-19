@@ -1,5 +1,4 @@
-typedef unsigned long long ULL;
-const int N = 100010;
+单哈希:
 const int P = 131;
 char str[N];
 int n,m;
@@ -31,7 +30,7 @@ int main()
     return 0;
 }
 
-双哈希：
+双哈希:
 const int CNT = 2;
 ll base[CNT] = {29,21};
 ll Mod[CNT] = {int(1e9 + 9),998244353};
