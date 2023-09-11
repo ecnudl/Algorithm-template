@@ -1,0 +1,24 @@
+void tarjan(int x) {
+    dfn[x] = low[x] = ++timestamp;
+    stk.push(x);st[x] = true;
+    for(auto y : e[x]) {
+        if(!dfn[y]) {
+            tarjan(y);
+            low[x] = min(low[x],low[y]);
+        }
+        else if(st[y]) {
+            low[x] = min(low[x],dfn[y]);
+        }
+    }
+    if(dfn[x] == low[x]) {
+        ++ssc_cnt;
+        int y;
+        do {
+            y = stk.top();
+            stk.pop();
+            st[y] = false;
+            id[y] = ssc_cnt;
+            Size[ssc_cnt] ++;
+        }while(x != y);
+    }
+}
