@@ -33,3 +33,9 @@ int main()
     cout<<dp[n][m]<<endl;
 
 }
+//完全背包求方案数：
+for(int i = 1;i <= n;i++) {
+    for(int j = V[i];j <= m;j++) {
+        dp[j] += dp[j - V[i]];
+    }
+}
