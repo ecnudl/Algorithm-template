@@ -27,18 +27,32 @@ struct Trie{
         }
         return tag[p]++;
     }
+};
+//01Trir树
+struct Trie {
+    void insert(int x)
+    {
+        int p = 0;
+        for (int i = 30; i >= 0; i -- )
+        {
+            int &s = son[p][x >> i & 1];
+            if (!s) s = ++ idx;
+            p = s;
+        }
+    }
+
     int search(int x)
     {
         int p = 0, res = 0;
         for (int i = 30; i >= 0; i -- )
         {
             int s = x >> i & 1;
-            if (tree[p][!s])
+            if (son[p][!s])
             {
                 res += 1 << i;
-                p = tree[p][!s];
+                p = son[p][!s];
             }
-            else p = tree[p][s];
+            else p = son[p][s];
         }
         return res;
     }
